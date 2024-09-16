@@ -1,15 +1,17 @@
 import { Schema, model } from 'mongoose';
-import { contactTypeList } from '../../constants/contacts.js';
+import { contactTypeList, phoneNumberRegex } from '../../constants/contacts.js';
+import { handleSaveError, setUpdateOptions } from './hooks.js';
 
 const contactSchema = new Schema(
   {
     name: {
       type: String,
-      required: true,
+      required: [true, 'The name field is required'],
     },
     phoneNumber: {
       type: String,
-      required: true,
+      match: phoneNumberRegex,
+      required: [true, 'The phone number field is required'],
     },
     email: {
       type: String,
@@ -29,5 +31,8 @@ const contactSchema = new Schema(
   },
   { versionKey: false, timestamps: true },
 );
+contactSchema.post('save', handleSaveError);
+contactSchema.pre('findOneAndUpdate', setUpdateOptions);
+contactSchema.post('findOneAndUpdate', handleSaveError);
 const ContactCollection = model('contact', contactSchema);
 export default ContactCollection;
