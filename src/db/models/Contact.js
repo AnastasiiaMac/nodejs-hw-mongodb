@@ -7,6 +7,8 @@ const contactSchema = new Schema(
     name: {
       type: String,
       required: [true, 'The name field is required'],
+      minlength: 3,
+      maxlength: 20,
     },
     phoneNumber: {
       type: String,
@@ -16,6 +18,8 @@ const contactSchema = new Schema(
     email: {
       type: String,
       required: false,
+      minlength: 3,
+      maxlength: 20,
     },
     isFavourite: {
       type: Boolean,
