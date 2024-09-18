@@ -6,13 +6,19 @@ export const getContacts = async ({
   page,
   sortBy = '_id',
   sortOrder = SORT_ORDER[0],
+  filter = {},
 }) => {
   const skip = (page - 1) * perPage;
-  const data = await ContactCollection.find()
+  const contactQuery = ContactCollection.find();
+  if (filter.contactType) {
+    contactQuery.where('contactType').equals(filter.contactType);
+  }
+  const count = await ContactCollection.countDocuments(contactQuery.getQuery());
+
+  const data = await contactQuery
     .skip(skip)
     .limit(perPage)
     .sort({ [sortBy]: sortOrder });
-  const count = await ContactCollection.find().countDocuments();
 
   const paginationData = calculatePaginationData({ count, perPage, page });
 
